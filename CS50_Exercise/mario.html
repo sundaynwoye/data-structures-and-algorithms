@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        let height;
+        do {
+            // Get height between 0 and 23 from user
+            height = Number(prompt("Enter height", " "));
+        } while (height < 0 || height > 23)
+
+        let string = "";
+        // For rows
+        for (let i = 0; i < height; i++) {
+            /* For columns */
+            for (let j = 0; j < height - i; j++) {
+                // Print spaces for left pyramid
+                string += " ";
+            }
+            for (let k = 0; k <= i; k++) {
+                // Print hashes for left pyramid
+                string += "#";
+            }
+            // Print gap
+            string += "  ";
+            // Print hashes for right pyramid
+            for (let l = 0; l <= i; l++) {
+                string += "#";
+            }
+            // Print new line
+            string += "\n";
+        }
+        console.log(string);
+    </script>
+</head>
+<body>
+    <div>
+        <h1>Draw a full Pyramid</h1>
+    </div>
+</body>
+</html>

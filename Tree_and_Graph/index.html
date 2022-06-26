@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <script>
+            /*const mother = { name: 'Ashleigh' };
+            const son = { name: 'Sammy' };
+            const daughter = { name: 'Alex' }
+            
+            const mother = {
+                name: 'Ashleigh',
+                children: [son, daughter]
+            }*/
+
+            /** Class representing a Tree. */
+            class Tree {
+                constructor(value) {
+                    this.value = value;
+                    this.children = [];
+                }
+                /*
+                * Adds a new value as a child of the tree
+                * @param {*} value the value to add
+                */
+               insertChild(value) {
+                   const newTree = new Tree(value);
+                   this.children.push(newTree);
+                   return newTree;
+               }
+               /*
+               * Removes a value from the tree
+               * @param {*} value the value to remove
+               */
+              removeChild(value) {
+
+              }
+            }
+
+            const myTree1 = new Tree(1);
+            const myTree2 = myTree1.insertChild(2);
+            myTree2.insertChild(3);
+
+            console.log(myTree1);
+
+            // Traversing One Tree
+            function Traverse(tree) {
+                console.log(tree.name);
+                tree.children.forEach(val => {
+                    console.log(val.name)
+                })
+            }
+
+            // Traversing Nested Trees
+            const family = {
+                name: 'Ashleigh',
+                children: [{
+                    name: 'Sammy',
+                    children: [{
+                        name: 'Bowser',
+                        children: [{name: 'p'}]
+                    }]
+                },
+                {name: 'Alex'}]
+            }
+
+            function traverse(tree) {
+                console.log(tree.name);
+                tree.children.forEach(child => {
+                    traverse(child);
+                });
+            }
+
+            traverse(family);
+
+            /*const chatBot = {
+                question: 'Do you feel like cooking',
+                yes: {
+                    question: 'Do you have milk?',
+                    yes: <question>,
+                    no: <question>
+                },
+                no: {
+                    question: 'Do you have toast?',
+                    yes: <question>,
+                    no: <question>
+                }
+            }*/
+
+            /** Class represent a Binary Tree. */
+            class BinaryTree {
+                constructor(question) {
+                    this.question = question;
+                    this.yes = null;
+                    this.no = null;
+                }
+                /*
+                *Explores all the node in the tree
+                */
+               traverse(func) {
+                   func(this.question);
+                   if (this.yes) this.yes.traverse(func)
+                   if (this.no) this.no.traverse(func)
+               }
+               /*
+               * Returns true if value is found
+               */
+              contains(question) {
+                  if (this.question === question) {
+                      return true;
+                  }
+                  return (this.yes && this.yes.contains(question) ? true : false) ||
+                  (this.no && this.no.contains(question) ? true : false);
+
+              }
+            }
+
+            const myTree = new BinaryTree();
+
+            console.log(myTree);
+
+            // if node is null, return 0.
+            // elseIf yes and no child nodes are null, return 1
+            // else recursively calculate
+               // leaf count of left subtree +
+               // leaf count of right subtree
+
+            function countReccos(node) {
+                if (node === null) return 0;
+
+                if (!node.yes && !node.no) { // check if a node is a leaf
+                    return 1;
+                }
+                return (countReccos(node.yes)) + (countReccos(node.no))
+            }
+
+            /*const ajdList = {
+                1: [2,5],
+                2: [1,5,3,4],
+                3: [2,4],
+                4: [2,5,3],
+                5: [4,1,2]
+            }
+
+            {
+                1: {
+                    node,
+                    edges: []
+                },
+                2: {
+                    node,
+                    edges: []
+                }
+            }*/
+
+            /** Class representing a Graph. */
+
+            class Graph {
+                constructor() {
+                    this.adjList = {};
+                }
+                /*
+                * Adds a new value
+                * @param {*} value - the value to add
+                */
+               addNode(node) {
+                   this.adjList[node.value] = {
+                       node: node,
+                       edges: []
+                   }
+               }
+               /*
+               * Adds an edge between nodeA and nodeB
+               * @param {*} nodes to connect
+               */
+              addEdge(node1, node2) {
+                  this.adjList[node1.value].edges.push(node2);
+                  this.adjList[node2.value].edges.push(node1);
+              }
+              /*
+              * Removes a node
+              * @param {*} node to remove
+              */
+             removeNode(node) {
+                 delete this.adjList[node.value];
+                 const nodes = Object.keys(this.adjList);
+                 nodes.forEach(currNode => {
+                     const edges = this.adjList[currNode].edges;
+                     const index = edges.indexOf(node);
+                     if (index > -1) {
+                         edges.splice(index, 1);
+                     }
+                 })
+             }
+            }
+
+            const adjList = new Graph();
+            const node1 = {value: 1}
+            const node2 = {value: 2}
+            adjList.addNode(node1);
+            adjList.addNode(node2);
+
+            adjList.addEdge(node1, node2);
+
+            // Graph Search
+            /*class Graph {
+                constructor() {
+                    this.adjList = {};
+                }
+
+                addNode(node) {
+                    this.adjList[node] = [];
+                }
+
+                depthFirstTraversal(startingNode, func = console.log) {
+                    const nodeStack = [];
+                    const visited = {};
+
+                    nodeStack.push(startingNode);
+                    visited[startingNode] = true;
+
+                    while (nodeStack.length) {
+                        const current = nodeStack.pop();
+                        const neigbors = this.adjList[current];
+                        func(current);
+
+                        neighbors.forEach(neighbor => {
+                            if (!visited[neighbor]) {
+                                nodeStack.push(neighbor);
+                                visited[neighbor] = true;
+                            }
+                        })
+                    }
+                }
+
+                breadthFirstTraversal(startingNode, func = console.log) {
+                    const queue = [];
+                    const visited = {};
+
+                    queue.push(startingNode);
+                    visited[startingNode] = true;
+
+                    while (queue.length) {
+                        const current = queue.shift();
+                        const neigbors = this.adjList[current];
+                        func(current);
+
+                        neigbors.forEach(neighbor => {
+                            if (!visited[neighbor]) {
+                                queue.push(neighbor);
+                                visited[neighbor] = true;
+                            }
+                        })
+                    }
+                }
+            }*/
+
+            /** Binary Search Tree. */
+            class Node {
+                constructor(value) {
+                    this.value = value;
+                    this.left = null;
+                    this.right = null
+                }
+            }
+
+            class BinarySearchTree {
+                constructor() {
+                    this.root = null;
+                }
+
+                insert(value) {
+                    function insertHelper(node, value) {
+                        if (node === null) {
+                            this.root = new Node(value);
+                            return this.root;
+                        }
+
+                        if (value < node.value) {
+                            if (node.left === null) {
+                                node.left = new Node(value);
+                                return node.left;
+                            } else {
+                                insertHelper(node.left, value);
+                            }
+                        } else {
+                            if (node.right === null) {
+                                node.right = new Node(value);
+                                return node.right;
+                            } else {
+                                insertHelper(node.right, value);
+                            }
+                        }
+                    }
+
+                    return insertHelper.call(this, this.root, value);
+                }
+
+                contains(value) {
+                    function containsHelper(node, value) {
+                        if (node === null) {
+                            return false;
+                        }
+
+                        if (node.value === value) {
+                            return true;
+                        } else if (value < node.value && node.left !== null) {
+                            return containsHelper(node.left, value);
+                        } else if (value > node.value && node.left !== null) {
+                            return containsHelper(node.right, value);
+                        }
+                        return false;
+                    }
+
+                    return containsHelper.call(this, this.root, value);
+                }
+            }
+
+            const myBST = new BinarySearchTree();
+
+            console.log(myBST)
+
+        </script>
+    </body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <script>
+            // Binary Search Tree
+            class Tree {
+                constructor() {
+                    this.root = null;
+                }
+                add(value) {
+                    if (this.root === null) {
+                        this.root = new Node(value);
+                    } else {
+                        let current = this.root;
+                        while (true) {
+                            if (current.value > value) {
+                                // go left
+                                if (current.left) {
+                                    current = current.left;
+                                } else {
+                                    current.left = new Node(value);
+                                    break;
+                                }
+                            } else {
+                                // go right
+                                if (current.right) {
+                                    current = current.right;
+                                } else {
+                                    current.right = new Node(value);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    return this;
+                }
+            }
+
+            class Node {
+                constructor(value) {
+                    this.value = value;
+                    this.left = null;
+                    this.right = null;
+                }
+            }
+
+            // Depth First Tree Traversals
+            const preorderTraverse = (node, array) => {
+                if (!node) return array;
+                array.push(node.value);
+                array = preorderTraverse(node.left, array);
+                array = preorderTraverse(node.right, array);
+                return array;
+            }
+
+            const inorderTraverse = (node, array) => {
+                if (!node) return array;
+                array = inorderTraverse(node.left, array);
+                array.push(node.value);
+                array = inorderTraverse(node.right, array);
+                return array;
+            }
+
+            const postorderTraverse = (node, array) => {
+                if (!node) return array;
+                array = preorderTraverse(node.left, array);
+                array = preorderTraverse(node.right, array);
+                array.push(node.value);
+                return array;
+            }
+
+            //Breadth First Tree Traversals
+            const breadthFirstTraverse = (queue, array) => {
+                if (!queue.length) return array;
+
+                const node = queue.shift();
+                array.push(node.value);
+                if (node.left) queue.push(node.left);
+                if (node.right) queue.push(node.right);
+                return breadthFirstTraverse(queue, array);
+            };
+
+            const breadthFirstTraverse2 = (queue, array) => {
+                while(queue.length) {
+                    const node = queue.shift();
+                    array.push(node.value);
+                    if (node.left) queue.push(node.left);
+                    if (node.right) queue.push(node.right);
+                }
+                return array;
+            };
+        </script>
+    </body>
+</html>

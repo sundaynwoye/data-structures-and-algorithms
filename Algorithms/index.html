@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <script>
+            /* Solution to Exercises */
+
+            /* Optimization with Caching */
+
+            const IsUnique = (arr) => {
+                let result = true;
+
+                for (let i = 0; i < arr.length; i++) {
+                    console.log(`~~~ OUTER LOOP ~~~~ i === ${i}`);
+
+                    for (let j = 0; j < arr.length; j++) {
+                        console.log(`~~~ INNER LOOP ~~~ j === ${j}`);
+                        if (i !== j && arr[i] === arr[j]) {
+                            result = false
+                        }
+                    }
+                }
+                return result;
+            }; 
+
+            console.log(IsUnique([1,2,3]) === true);
+            console.log(IsUnique([1,1,3]) === false);
+
+            // We can do better!
+            const isUnique = (arr) => {
+                const cache = {};
+                let result = true;
+
+                for (let i = 0; i < arr.length; i++) {
+                    console.log(`~~~ LOOP ~~~ i === ${i}`);
+                    if (cache[arr[i]]) {
+                        result = false;
+                    } else {
+                        cache[arr[i]] = true;
+                    }
+                }
+                return result
+            }
+            console.log(isUnique([1,2,3]) === true);
+            console.log(isUnique([1,1,3]) === false);
+
+
+            // Task: Transform this simple sorting algorithm into a unique sort, meaning that
+            // it should not return any duplicate values in the sorted array.
+
+            const uniqSort = function(arr) {
+                const cache = {};
+                const result = [arr[0]];
+                
+                for (let i = 1; i < arr.length; i++) {
+                    // start loop at 1 as element 0 can never be a duplicate
+                    if (!cache[arr[i]]) {
+                        result.push(arr[i]);
+                        cache[arr[i]] = true;
+                    }
+                }
+                return result.sort((a, b) => a - b);
+            }
+            console.log(uniqSort([4,2,2,3,2,2,2]));
+
+            /* Basic Memoization */
+            // Task 1: Write a function, times10, that takes an argument, n, and multiplies n times 10
+
+            const times10 = n => n * 10;
+
+            console.log(`~~~~~~~~~~~Task 1~~~~~~~~~~~~~`);
+            console.log('times10 returns:', times10(9));
+
+            // Task 2: Use an object to cache the results of your times10 function.
+            // protip 1: Create a function that checks if the value for n has been calculated before.
+            // protip 2: If the value for n has not been calculated, calculate and then save the result in the cache object.
+
+            const cache = {};
+
+            const memoTimes10 = n => {
+                if (n in cache) {
+                    console.log('Fetching from cache:', n)
+                    return cache[n];
+                } else {
+                    console.log('Calculating result');
+                    let result = times10(n);
+                    cache[n] = result;
+                    return result;
+                }
+            };
+
+            console.log('~~~~~~~Task 2~~~~~~~~');
+            console.log('Task 2 calculated value:', memoTimes10(9)); // Calculated
+            console.log('Task 2 calculated value:', memoTimes10(9)); // Cached
+
+            //Task 3: Clean up your global scope by moving your cache inside your function.
+            //protip: Use a closure to return a function that you can call later.
+            const memoizedClosureTimes10 = () => {
+                let cache = {};
+                return (n) => {
+                    if (n in cache) {
+                    console.log('Fetching from cache:', n)
+                    return cache[n];
+                } else {
+                    console.log('Calculating result');
+                    let result = n * 10;
+                    cache[n] = result;
+                    return result;
+                }
+                };
+            };
+
+            // returned function from memoizedAdd
+            const memoClosureTimes10 = memoizedClosureTimes10();
+            console.log('~~~~~~~~~~Task 3~~~~~~~~');
+            console.log('Task 3 calculated value:', memoClosureTimes10(9)); // calculated
+            console.log('Task 3 cached value:', memoClosureTimes10(9)); // cached
+
+            //Task 4: Make your memo function generic and accept the times10 function as a callback
+            //rather than defining the n * 10 logic inside the if/else or pulling it in from the global scope.
+
+            //protip: Take advantage of the fact that parameters are saved in the closure as well, just like the cache from the previous example.
+            const memoize = (cb) => {
+                let cache = {};
+                return (n) => {
+                    if (n in cache) {
+                    console.log('Fetching from cache:', n)
+                    return cache[n];
+                } else {
+                    console.log('Calculating result');
+                    let result = cb(n);
+                    cache[n] = result;
+                    return result;
+                }
+                };
+            };
+
+            // returned function from memoizedAdd
+            const memoizedTimes10 = memoize(times10)
+            console.log('~~~~~~~~~~Task 4~~~~~~~~');
+            console.log('Task 4 calculated value:', memoizedTimes10(9)); // calculated
+            console.log('Task 4 cached value:', memoizedTimes10(9)); // cached
+
+            /* Recursion */
+
+            function wrapperFnLoop(start, end) {
+                function recurse(i) {
+                    console.log(`Looping from ${start} until ${end}`);
+                    
+                    if (i < end) {
+                        recurse(i + 1);
+                    }
+                }
+
+                recurse(start);
+            }
+
+            console.log('~~~~ wrapperFnLoop ~~~~');
+            wrapperFnLoop(1,5);
+
+            function MemoFnLoop(i, end) {
+                console.log(`looping from ${i} until ${end}`);
+                if (i < end) {
+                    MemoFnLoop(i + 1, end);
+                }
+            }
+
+            console.log('~~~~ MemoFnLoop ~~~~');
+            MemoFnLoop(1,6);
+
+            //Task: rewrite this function so that it uses a loop rather than recursion
+
+            function joinElements(array, joinString) {
+                function recurse(index, resultSofar) {
+                    resultSofar += array[index];
+                    if(index === array.length - 1) {
+                        return resultSofar
+                    } else {
+                        return recurse(index + 1, resultSofar + joinString);
+                    }
+                }
+                return recurse(0, '');
+            }
+
+            console.log(joinElements(['s','cr','t cod', ' :) :)'], 'e'));
+
+            // Iterative Loop solution
+
+            function JoinElements(array, joinString) {
+                let resultSofar = '';
+
+                for (let i = 0; i < array.length - 1; i++) {
+                    resultSofar += array[i] + joinString;
+                }
+
+                return resultSofar + array[array.length - 1];
+            }
+
+            console.log(JoinElements(['s','cr','t cod', ' :) :)'], 'e'));
+
+            //Task 1: Write recursive factorial method
+            //Task 2: Memoize your factorial method
+
+            const mmemoize = (fn) => {
+                let cache = {};
+                return (...args) => {
+                    let n = args[0];
+                    if (n in cache) {
+                        console.log('Fetching from cache', n);
+                        return cache[n];
+                    } else {
+                        console.log('Calculating result', n);
+                        let result = fn(n);
+                        cache[n] = result;
+                        return result
+                    }
+                }
+            }
+            const factorial = mmemoize(
+                (x) => {
+                    if (x === 0) {
+                        return 1;
+                    } else {
+                        return x * factorial(x - 1);
+                    }
+                }
+            );
+            console.log(factorial(5)); // calculated
+            console.log(factorial(5)); // cached
+
+            //Task: Implement linear search
+
+            function linearSearch(list, item) {
+                let index = -1;
+                list.forEach((listItem, i) => {
+                    if (listItem === item) {
+                        index = i;
+                    }
+                });
+                return index;
+            }
+
+            console.log(linearSearch([2,6,7,90,103], 90));
+
+            //Task: Implement Binary search
+
+            function binarySearch(sortedArray, item) {
+                let start = 0;
+                let end = sortedArray.length - 1;
+
+                while (start <= end) {
+                    let middle = Math.floor((start + end) / 2);
+                    
+                    if (sortedArray[middle] === item) {
+                        // found the item
+                        return middle;
+                    } else if (sortedArray[middle] < item) {
+                        // continue searching to the right
+                        start = middle + 1;
+                    } else {
+                        // continue search to the left
+                        end = middle - 1;
+                    }
+                }
+                // item wasn't found
+                return -1;
+            }
+
+            console.log(binarySearch([2,6,7,90,103], 90));
+
+            //Task: Implement bubblesort
+            // Sample of arrays to sort
+            let arrayRandom = [9,2,5,6,4,3,7,10,1,8];
+            let arrayOrdered = [1,2,3,4,5,6,7,8,9,10];
+            let arrayReversed = [10,9,8,7,6,5,4,3,2,1];
+
+            function swap(array, i, j) {
+                let temp = array[i];
+                array[i] = array[j];
+                array[j] = temp;
+            }
+            
+            // basic implementation
+            function bubbleSortBasic(array) {
+                let counterOuter = 0;
+                let counterInner = 0;
+                let countSwap = 0;
+
+                for (let i = 0; i < array.length; i++) {
+                    counterOuter++;
+                    for (let j = 1; j < array.length; j++) {
+                        counterInner++;
+                        if (array[j - 1] > array[j]) {
+                            countSwap++;
+                            swap(array, j - 1, j);
+                        }
+                    }
+                }
+
+                console.log('Outer:', counterOuter, 'Inner:', counterInner, 'Swap:', countSwap);
+                return array;
+            }
+            console.log('~~~ ~~~ BASIC ~~~ ~~~');
+
+            console.log('\n~~~ basic: arrayRandom ~~~');
+            bubbleSortBasic(arrayRandom.slice());
+
+            console.log('\n~~~ basic: arrayOrdered ~~~');
+            bubbleSortBasic(arrayOrdered.slice());
+
+            console.log('\n~~~ basic: arrayReversed ~~~');
+            bubbleSortBasic(arrayReversed.slice());
+
+            // optimized
+            function bubbleSort(array) {
+                let counterOuter = 0;
+                let counterInner = 0;
+                let countSwap = 0;
+
+                let swapped;
+                do {
+                    counterOuter++;
+                    swapped = false;
+                    for (let i = 0; i < array.length; i++) {
+                        counterInner++;
+                        if(array[i] && array[i + 1] && array[i] > array[i + 1]) {
+                            countSwap++;
+                            swap(array, i, i + 1);
+                            swapped = true;
+                        }
+                    }
+                } while(swapped);
+
+                console.log('Outer:', counterOuter, 'Inner:', counterInner, 'Swap:', countSwap);
+                return array;
+            }
+            console.log('\n\n~~~ ~~~ OPTIMIZED ~~~ ~~~');
+
+            console.log('\n~~~ optimized: arrayRandom ~~~');
+            bubbleSort(arrayRandom.slice());
+
+            console.log('\n~~~ optimized: arrayOrdered ~~~');
+            bubbleSort(arrayOrdered.slice());
+
+            console.log('\n~~~ optimized: arrayReversed ~~~');
+            bubbleSort(arrayReversed.slice());
+
+            //Task: implement mergesort
+
+            // Split the array into halves and merge them recursively
+            function mergeSort(arr) {
+                if (arr.length === 1) {
+                    // return once we hit an array with a single item
+                    return arr;
+                }
+
+                const middle = Math.floor(arr.length / 2) // get the middle item of the array rounded down
+                const left = arr.slice(0, middle); // item on the left side
+                const right = arr.slice(middle); // items on the right side
+                
+                return merge(mergeSort(left), mergeSort(right))
+            }
+
+            // compare the arrays item by item and return the concatenated result
+            function merge(left, right) {
+                let result = [];
+                let indexLeft = 0;
+                let indexRight = 0;
+
+                while (indexLeft < left.length && indexRight < right.length) {
+                    if (left[indexLeft] < right[indexRight]) {
+                        result.push(left[indexLeft]);
+                        indexLeft++
+                    } else {
+                        result.push(right[indexRight]);
+                        indexRight++
+                    }
+                }
+
+                return result.concat(left.slice(indexLeft)).concat(right.slice(indexRight));
+            }
+
+            const list = [2,5,1,3,7,2,3,8,6,3];
+            console.log(mergeSort(list)); // [1,2,2,3,3,3,5,6,7,8]
+            
+
+            // write a function, makeChange, that returns an integer that represents the least number of coins
+            // that add up to an amount where the amount is always divisible by 5.
+
+            // coin values: 5, 10, 25
+
+            // Greedy Algorithm
+            const makeChange = (coins, amount) => {
+                coins.sort((a, b) => b - a);
+                let coinTotal = 0;
+                let i = 0;
+                while (amount > 0) {
+                    if (coins[i] <= amount) {
+                        amount -= coins[i];
+                        coinTotal++
+                    } else {
+                        i++;
+                    }
+                }
+                return coinTotal;
+            };
+
+            console.log(makeChange([5, 10, 25], 50));
+
+            // Brute force approach
+            let recursionCounter = 0;
+            const coinsArr = [10, 6, 1];
+
+            const MakeChange = (value, i) => {
+                recursionCounter++;
+                console.log(`${recursionCounter}; calling ${value} at ${i}`);
+                if (value === 0) return 0;
+                let minCoins;
+                coinsArr.forEach((coin, i) => {
+                    if (value - coin >= 0) {
+                        let currMinCoins = MakeChange(value - coin, i);
+                        if (minCoins === undefined || currMinCoins < minCoins) {
+                            minCoins = currMinCoins;
+                        }
+                    }
+                });
+                return minCoins + 1;
+            }
+
+            console.log(MakeChange(12));
+
+            //Memoization + Recursive Approach
+            const Cache = {};
+            const Coins = [10, 6, 1];
+
+            const makChange = (c) => {
+                // Return the value if it's in the cache
+                if (Cache[c]) return Cache[c];
+                let minCoins = -1;
+                Coins.forEach((coin, i) => {
+                    if (c - coin >= 0) {
+                        let currMinCoins = makChange(c - coin);
+                        if (minCoins === -1 || currMinCoins < minCoins) {
+                            minCoins = currMinCoins;
+                        }
+                    }
+                });
+
+                // Save the value into the cache
+                Cache[c] = minCoins + 1;
+                return Cache[c];
+            }
+
+            console.log(makChange(12));
+
+        </script>
+    </body>
+</html>

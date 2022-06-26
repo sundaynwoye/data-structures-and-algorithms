@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <script>
+            class Stack {
+                constructor() {
+
+                    this._storage = {};
+                    this._length = 0;
+                }
+                /*
+                * Adds a new value at the end of the stack
+                * @param {*} value the value to push
+                */
+               push(value) {
+                   //TODO: add typechecking and check arguments
+                   this._storage[this._length] = value;
+                   this._length++;
+               }
+
+               /*
+               * Removes the value at the end of the stack and returns it
+               * @return {*} the last and newest value in the stack
+               */
+              pop() {
+                  // What if it is empty?
+                  if (this._length) {
+                  const lastVal = this._storage[this._length - 1];
+                  delete this._storage[this._length - 1];
+                  this._length--;
+                  return lastVal;
+                  }
+              }
+              /*
+              * Returns the value at the end of the stack without removing it
+              * @return {*} the last and newest value in the stack
+              */
+             peek() {
+                 if (this._length) {
+                     return this._storage[this._length - 1];
+                 }
+             }
+            }
+
+            const myStack = new Stack();
+
+            myStack.push('Zero');
+            myStack.push('one');
+
+            myStack.pop();
+            myStack.push('two');
+
+            console.log(myStack.peek());
+
+            console.log(myStack);
+
+            class Queue {
+                constructor() {
+
+                    this._storage = {};
+                    this._length = 0;
+                    this._headIndex = 0;
+                }
+                /*
+                * Enqueue a new value at the end of the queue
+                * @param {*} value the value to enqueue
+                */
+               enqueue(value) {
+                   //TODO: add typechecking and check arguments
+                   this._storage[this._length + this._headIndex] = value;
+                   this._length++;
+               }
+
+               /*
+               * Dequeues the value from the beginning of the queue and returns it
+               * @return {*} the first and oldest value in the queue
+               */
+              dequeue() {
+                  // What if it is empty?
+                  if (this._length) {
+                  const firstVal = this._storage[this._headIndex];
+                  delete this._storage[this._headIndex];
+                  this._length--;
+                  this._headIndex++;
+                  return firstVal;
+                  }
+              }
+              /*
+              * Returns the value at the beginning of the queue without removing it
+              * @return {*} the first and oldest value in the queue
+              */
+             peek() {
+                 if (this._length) {
+                     return this._storage[this._headIndex];
+                 }
+             }
+            }
+
+            const myQueue = new Queue();
+            myQueue.enqueue('zero');
+            myQueue.enqueue('one');
+
+            myQueue.dequeue();
+            myQueue.enqueue('two');
+
+            console.log(myQueue);
+
+            class LinkedList {
+                constructor(value) {
+                    this.head = {value, next: null};
+                    this.tail = this.head;
+                }
+                /*
+                * Inserts a new value to the end of the Linked list
+                * @param {*} value - the value to insert
+                */
+               insert(value) {
+                   const node = {value, next: null};
+                   this.tail.next = node;
+                   this.tail = node;
+               }
+               /*
+               * Deletes a node
+               * @param {*} value - the node to remove
+               * @return {*} value - the deleted node's value
+               */
+              remove() {}
+              /*
+              * Removes the value at the end of the linked list
+              *@return {*} - the removed value
+              */
+             removeTail() {
+                 let currentNode = this.head;
+                 while (currentNode.next !== this.tail) {
+                     currentNode = currentNode.next;
+                 }
+                 currentNode.next = null;
+                 this.tail = currentNode;
+             }
+             /*
+             * Searches the linked list and returns true if it contains the value passed
+             * @param {*} value - the value to search for
+             * @return {boolean} - true if value is found, otherwise false
+             */
+             contains(value) {
+                let currentNode = this.head;
+                 while (currentNode.value !== value) {
+                     currentNode = currentNode.next;
+                 }
+                 return currentNode.value === value;
+             }
+             /*
+             * Checks if a node is the head of the linked list
+             * @param {{prev:Object|null, next:Object|null}} node - the node to check
+             * @return {boolean} - true if node is the head, otherwise false
+             */
+            isHead(node) {
+                return node === this.head;
+            }
+            /*
+            * Checks if a node is the tail of the linked list
+            * @param {{prev:Object|null, next:Object|null}} node - the node to check
+            * @return {boolean} - true if node is the head, otherwise false
+            */
+           isTail(node) {
+               return node === this.tail;
+           }
+            }
+
+            const myList = new LinkedList(1);
+            myList.insert(2);
+            myList.insert(3);
+            myList.removeTail();
+            console.log(myList);
+
+            class HashTable {
+                constructor(val) {
+                    this._storage = [];
+                    this._tableSize = val;
+                }
+                /*
+                * Inserts a new key-value pair
+                * @param {string} key - the key associated with the value
+                * @param {*} value - the value to insert
+                */
+                insert(key, value) {
+                    const index = this._hash(key, this._tableSize);
+
+                    if (!this._storage[index]) {
+                        this._storage[index] = [];
+                    }
+                    //TODO: loop through array and find if key was already inserted
+                    this._storage[index].push([key, value]);
+                }
+                /*
+                * Deletes a key-value pair
+                * @param {string} key - the key associated with the value
+                * @return {*} value - the deleted value
+                */
+                remove() {}
+                /*
+                * Returns the value associated with a key
+                * @param {string} key - the key to search for
+                * @return {*} - the value associated with the key
+                */
+                retrieve(key) {
+                    const index = this._hash(key, this._tableSize);
+                    const arrayAtIndex = this._storage[index];
+
+                    if (arrayAtIndex) {
+                        for (let i = 0; i < arrayAtIndex.length; i++) {
+                            const keyValueArray = arrayAtIndex[i];
+                            if (keyValueArray[0] === key) return keyValueArray[1];
+                        }
+                    }
+                }
+                /*
+                * Hashes string value into an integer that can be mapped to an array index
+                * @param {string} str - the string to be hashed
+                * @param {number} n - the size of the storage array
+                * @return {number} - an integer between 0 and n
+                */
+                _hash(str, n) {
+                    let sum = 0;
+                    for (let i = 0; i < str.length; i++) {
+                        sum += str.charCodeAt(i) * 3
+                    }
+
+                    return sum % n;
+                }
+
+            }
+
+            const myHashTable = new HashTable(25);
+
+            myHashTable.insert('a', 1);
+            myHashTable.insert('b', 2);
+
+            //[0,0,0,[['a',1], ['b', 2]]] collision handled
+
+            console.log(myHashTable);
+
+        </script>
+    </body>
+</html>
