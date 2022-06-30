@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <div>
+        <h1>Data Structures & Aigorithms</h1>
+        </div>
+        <script>
+            // Competetive gaming
+            let k = 4;
+            scores = [2,2,3,4,5];
+            const numPlayers = (K, scores) => {
+                let sorted = scores.sort((a, b) => b - a);
+                let players = sorted.filter(n => n >= sorted[3]);
+               return players.length;
+            }
+            let num = numPlayers(k, scores);
+            console.log(num);
+
+            // Disk space Analysis
+            let x = 2;
+            let space = [8,2,4,6];
+            const segment = (x, space) => {
+                let minNums = [];
+                for (let i = 0; i < space.length - 1; i++) {
+                  let min = Math.min(space[i], space[i + 1]);
+                  minNums.push(min);
+                }
+                return Math.max(...minNums);
+            }
+            let max = segment(x, space);
+            console.log(max);
+
+            // Parking Dilemma
+            let cars = [1,2,3,10];
+            let m = 4;
+            const carParkingRoof = (cars, m) => {
+                let sortedCars = cars.sort((a,b) => a - b);
+                let lastCarIndex = sortedCars.length - 1;
+                if (m < cars.length) { 
+                    let roofOneLength = sortedCars[m - 1] - sortedCars[0] + 1;
+                    let roofTwoLength = sortedCars[lastCarIndex] - sortedCars[m - 2] + 1;
+                    return Math.min(roofOneLength, roofTwoLength)
+                }
+                return sortedCars[m - 1] - sortedCars[0] + 1;
+            }
+            let roofLength = carParkingRoof(cars, m);
+            console.log(roofLength);
+
+        </script>
+    </body>
+</html>
