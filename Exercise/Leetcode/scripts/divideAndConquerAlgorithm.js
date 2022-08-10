@@ -1,36 +1,39 @@
-/*-----Divide and conquer algorithm-----*/
+/**
+* Divide and conquer algorithm
+*/
 
-            //Merge K Sorted Lists
-            function mergeList(a, b) {
-                let dummy = new ListNode(0);
-                let current = dummy;
 
-                while(a !== null && b !== null) {
-                    if (a.val < b.val) {
-                        current.next = a;
-                        a = a.next;
-                    } else {
-                        current.next = b;
-                        b = b.next;
-                    }
-                    current = current.next;
-                }
-                current.next = a || b;
+/*--------Merge K Sorted Lists--------*/
+function mergeList(a, b) {
+    let dummy = new ListNode(0);
+    let current = dummy;
 
-                return dummy.next;
-            }
-            
-            const mergeKLists = (lists) => {
-                if (lists.length === 0) {
-                    return null;
-                }
+    while(a !== null && b !== null) {
+        if (a.val < b.val) {
+            current.next = a;
+            a = a.next;
+        } else {
+            current.next = b;
+            b = b.next;
+        }
+        current = current.next;
+    }
+    current.next = a || b;
 
-                while(lists.length > 1) {
-                    let a = lists.shift();
-                    let b = lists.shift();
-                    let mergedAB = mergeList(a, b);
-                    lists.push(mergedAB);
-                }
+    return dummy.next;
+}
 
-                return lists[0];
-            }
+const mergeKLists = (lists) => {
+    if (lists.length === 0) {
+        return null;
+    }
+
+    while(lists.length > 1) {
+        let a = lists.shift();
+        let b = lists.shift();
+        let mergedAB = mergeList(a, b);
+        lists.push(mergedAB);
+    }
+
+    return lists[0];
+}
